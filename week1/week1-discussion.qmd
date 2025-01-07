@@ -1,9 +1,95 @@
 ---
 title: "Week 1 Discussion"
+subtitle: "Data Wrangling"
 author: "Liv Hemond"
 date: 2025-01-07
 toc: true
 format: html
 editor: visual
 ---
+
+Data wrangling = process of cleaning messy data and getting it into tidy form
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(usdata)
+library(lubridate)
+```
+
+
+## Import Fracking Data
+
+```{r}
+fracking <- read_csv(here::here("week1", "data", "registryupload_1.csv"))
+```
+## Data Exploration
+
+Issues:
+- State column is inconsistent
+- Column names are inconsistent
+- Start and end date columns are difficult to work with
+- Lots of NAs
+
+```{r}
+dim(fracking) # dimensions
+
+str(fracking) # display structure
+```
+
+
+## Clean Fracking Data
+
+```{r}
+fracking_clean <- fracking %>% 
+  clean_names() %>% 
+  mutate(job_start_date = str_remove(job_start_date, " AM")) %>% # remove characters from end of string
+  mutate(datetime_start = mdy_hms(job_start_date)) %>% # convert from character strings to datetime objects
+  mutate(year = year(datetime_start)) %>% # extract just the year 
+  select(datetime_start, year, state_name, well_name, total_base_water_volume) %>%  # keep only desired columns
+  mutate(state_name = str_to_title(state_name)) %>% # convert to title case
+  filter(!str_detect(state_name, pattern = "\\?")) %>%  # remove rows that end with ?
+  mutate(state_name = ifelse(
+    test = str_length(state_name) == 2, 
+    yes = abbr2state(state_name),
+    no = state_name)) %>% # convert abbreviated state names to full names
+  mutate(state_name = case_when(
+    state_name == "Colordao" ~ "Colorado",
+    state_name == "Loiusiana" ~ "Louisiana",
+    state_name == "Louisianna" ~ "Louisiana",
+    state_name == "Lousiana" ~ "Louisiana",
+    state_name == "New Mexcio" ~ "New Mexico",
+    state_name == "Norh Dakota" ~ "North Dakota",
+    state_name == "Norht Dakota" ~ "North Dakota",
+    state_name == "North  Dakota" ~ "North Dakota",
+    state_name == "North Dakata" ~ "North Dakota",
+    state_name == "North Dakotta" ~ "North Dakota",
+    state_name == "Noth Dakota" ~ "North Dakota",
+    state_name == "Pennslvania" ~ "Pennsylvania",
+    state_name == "Pennsylavania" ~ "Pennsylvania",
+    state_name == "Pennsylvanya" ~ "Pennsylvania",
+    state_name == "Penssylvania" ~ "Pennsylvania",
+    state_name == "Texasa" ~ "Texas",
+    state_name == "Texs" ~ "Texas", 
+    state_name == "West Viginia" ~ "West Virginia",
+    state_name == "Wyominng" ~ "Wyoming", 
+    TRUE ~ state_name # copy over the rest of the names as is
+  )) %>% 
+  filter(!state_name %in% c("Beaver", "Beckham", "Harper", "Hemphill", "Midland", "Red River", "Roosevelt", "Rusk", "State", "Ward")) %>%  # remove state names that aren't actual states
+  mutate(state_abb = state2abbr(state_name)) %>%  # add a column for state name abbreviations
+  select(datetime_start, year, state_name, state_abb, well_name, total_base_water_volume) %>% # reorder
+  rename(total_base_water_volume_gal = total_base_water_volume) %>%  # rename column
+  filter(!is.na(total_base_water_volume_gal)) %>%  # remove NAs in this column (could also use drop_na())
+  arrange(datetime_start) # order with oldest date first
+  
+fracking_clean
+```
+
+
+
+
+
+
+
+
 
