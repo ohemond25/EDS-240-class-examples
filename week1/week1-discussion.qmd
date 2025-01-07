@@ -1,0 +1,9 @@
+---
+title: "Week 1 Discussion"
+author: "Liv Hemond"
+date: 2025-01-07
+toc: true
+format: html
+editor: visual
+---
+
