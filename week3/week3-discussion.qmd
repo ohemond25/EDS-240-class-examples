@@ -1,0 +1,70 @@
+---
+title: "Week 3 Discussion"
+subtitle: "Writing Alt Text"
+author: "Liv Hemond"
+date: 2025-01-21
+toc: true
+format: html
+editor: visual
+---
+
+Alt text is written description that conveys the meaning of your visual elements
+
+-   read aloud by asisstive technologies like screen readers
+
+-   will appear in place of image for those with slow connection / low bandwidth
+
+-   may help with situational limitations (like viewing a screen in bright sunlight)
+
+-   more accurate descriptions to search engine crawlers / web scrapers
+
+3-part formula: alt = "[**Chart type**]{.underline} of [**type of data**]{.underline} where [**reason for including chart**]{.underline}"
+
+Should include both a figure capture (supplemental to the plot) AND alt text (could replace the plot for certain viewers)
+
+Other tips:
+
+-   Write in sentence case, but keep it short. People using screen readers can't go back to a word if they miss something.
+
+-   Consider the use of special characters and whether they can be processed by asisstive devices
+
+-   Link to the data or source (in the surrounding text or figure caption, NOT in the alt text)
+
+## Example 1: Palmerpenguins ggplot
+
+Adding alt text using quarto chunk options
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-alt: "A histogram showing the distribution of body mass for three species of penguin where Gentoo are heaviest at around 5,500 grams, and Adelie and Chinstrap are on average 2,000 grams lighter."
+#| fig-cap: "Histogram of penguin body masses using `palmerpenguins` data."
+
+library(ggplot2)
+library(palmerpenguins)
+
+ggplot(data = penguins, aes(x = body_mass_g, fill = species)) +
+  geom_histogram(alpha = 0.5, 
+                 position = "identity") +
+  scale_fill_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Body mass (g)",
+       y = "Frequency",
+       title = "Penguin body masses")
+```
+
+## Example 2: New York Times
+
+Add image and alt text using Markdown.
+
+![Monthly global temperature compared to the 20th century average.](nyt-monthly-temp.png){fig-alt="A dot plot of monthly global temperatures from 1850 to 2023, compared with the average for the 20th century. Temperatures are increasingly becoming hotter than average starting after 1950. There's been 12 record-breaking hot months between 2010 and 2023"}
+
+## Example 3: Chapman et al. 2024
+
+Add image and alt text using HTML.
+
+<img src="chapman-etal-2024.png" alt="A global heatmap of species observations from the Global Biodiversity Information Facility (GBIF) database where observations are multiple orders of magnitude higher in higher-income countries such as the United States and countries in Europe." width="700px"/>
+
+
+

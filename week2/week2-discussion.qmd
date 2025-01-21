@@ -2,7 +2,7 @@
 title: "Week 2 Discussion"
 subtitle: "Visualization Basics"
 author: "Liv Hemond"
-date: 2025-01-07
+date: 2025-01-14
 toc: true
 format: html
 editor: visual
